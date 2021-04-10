@@ -14,6 +14,7 @@ int main2(int argc, const char * argv[]) {
     if(!glfwInit()){
         return -1;
     }
+    
     win = glfwCreateWindow(640, 480, "OpenGL Base Project", NULL, NULL);
     if(!win)
     {
@@ -34,7 +35,7 @@ int main2(int argc, const char * argv[]) {
     glGenBuffers(1, &vertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
+     
     
     while(!glfwWindowShouldClose(win)){
       
@@ -52,6 +53,7 @@ int main2(int argc, const char * argv[]) {
     
         glDrawArrays(GL_POINTS, 0, 1);
         glDisableVertexAttribArray(0);
+        
         
         glfwSwapBuffers(win);
         glfwPollEvents();

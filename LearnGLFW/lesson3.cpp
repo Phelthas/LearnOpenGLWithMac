@@ -7,7 +7,7 @@
 
 #include <GLFW/glfw3.h>
 
-int main(int argc, const char * argv[]) {
+int main3(int argc, const char * argv[]) {
     
     
     GLFWwindow* win;

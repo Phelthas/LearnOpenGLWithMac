@@ -7,10 +7,6 @@
 
 #include <GLFW/glfw3.h>
 #include <OpenGL/gl3.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/glext.h>
-#include <math.h>
 #include <iostream>
 
 
@@ -19,39 +15,13 @@
 #define _STRINGIFY( _x )   __STRINGIFY( _x )
 #endif
 
-static const char * kPassThruVertex = _STRINGIFY(
-
-attribute vec4 position;
-attribute mediump vec4 texturecoordinate;
-varying mediump vec2 coordinate;
-
-void main()
-{
-    gl_Position = position;
-    coordinate = texturecoordinate.xy;
-}
-                                                 
-);
-
-static const char * kPassThruFragment = _STRINGIFY(
-                                                   
-varying highp vec2 coordinate;
-uniform sampler2D videoframe;
-
-void main()
-{
-    gl_FragColor = texture2D(videoframe, coordinate);
-}
-                                                   
-);
-
 GLuint compileShaders(void);
 
 struct vector3 {
     float position[3];
 };
 
-int main4(int argc, const char * argv[]) {
+int main(int argc, const char * argv[]) {
     
     
     GLFWwindow* win;
@@ -59,11 +29,16 @@ int main4(int argc, const char * argv[]) {
         return -1;
     }
     
-    //版本号是opengl4.5
-//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);//设置主版本号
-//        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);//设置次版本号
-//        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);//在mac系统上需要设置该语句
+    /**
+     The Core Profile does not support the old fixed pipeline anymore, and requires you to implement your own shaders in GLSL.
+     You need to use Vertex Array Objects (VAO). Look up glGenVertexArrays and glBindVertexArray.
+     */
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);//设置主版本号
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);//设置次版本号
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
     
     win = glfwCreateWindow(640, 480, "OpenGL Base Project", NULL, NULL);
     if(!win)
@@ -71,60 +46,49 @@ int main4(int argc, const char * argv[]) {
         glfwTerminate();
         return -1;
     }
-        
-//    const GLubyte *version = glGetString(GL_VERSION);
-//
-//    GLuint program = compileShaders();
-//
-//    glUseProgram(program);
     
-//    vector3 vertices[] = {
-//        {-0.5, 0.0, 0.0,},
-//        {0.5, 0.5, 0.0,},
-//        {0.5, -0.5, 0.0,},
-//    };
-    
-    vector3 vertices[] = {
+    GLfloat vertices[] = {
         -0.5, 0.0, 0.0,
         0.5, 0.5, 0.0,
         0.5, -0.5, 0.0,
     };
     
+
+    glfwMakeContextCurrent(win);
+    
+    const GLubyte *version = glGetString(GL_VERSION);
+    std::cout << "opengl version: " << version << std::endl;
+    
+    
+    
+    GLuint vertexArrayObject;
+    glGenVertexArrays(1, &vertexArrayObject);
+    glBindVertexArray(vertexArrayObject);
     
     GLuint vertexBufferObject;
     glGenBuffers(1, &vertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(0);//这一句很关键
     
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
     
-    glfwMakeContextCurrent(win);
     
     GLuint program = compileShaders();
-
-    glUseProgram(program);
-    
-    glPointSize(40);
-
     
     while(!glfwWindowShouldClose(win)){
 //        double time = glfwGetTime();
-        
-//        glClearColor(sin(time) + 0.5, cos(time) + 0.5, 0.0f, 1.0f);
         
         glClearColor(0.25, 0.25, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
         
-        
-        
-        glEnableVertexAttribArray(0);//这一句很关键
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    
-        glDrawArrays(GL_POINTS, 0, 1);
-//        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDisableVertexAttribArray(0);
+        glUseProgram(program);
+        glBindVertexArray(vertexArrayObject);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         
         glfwSwapBuffers(win);
         glfwPollEvents();
@@ -145,7 +109,7 @@ GLuint compileShaders(void) {
         "layout (location = 0) in vec3 Position; \n"
         "void main(void)    \n"
         "{ \n"
-        "gl_Position = vec4(0.5 * Position.x, 0.5 * Position.y, Position.z, 1.0); \n"
+        "gl_Position = vec4(Position.x, Position.y, Position.z, 1.0); \n"
         "} \n"
     };
     
