@@ -1,8 +1,8 @@
 //
-//  lesson1.cpp
+//  lesson4_1.cpp
 //  LearnGLFW
 //
-//  Created by billthaslu on 2021/4/9.
+//  Created by billthaslu on 2021/4/10.
 //
 
 #include <GLFW/glfw3.h>
@@ -10,12 +10,14 @@
 #include <iostream>
 #include "GLUtilities.hpp"
 
+
 #if !defined(_STRINGIFY)
 #define __STRINGIFY( _x )   # _x
 #define _STRINGIFY( _x )   __STRINGIFY( _x )
 #endif
 
-int main4(int argc, const char * argv[]) {
+
+int main(int argc, const char * argv[]) {
     
     
     GLFWwindow* win;
@@ -42,11 +44,16 @@ int main4(int argc, const char * argv[]) {
     }
     
     GLfloat vertices[] = {
-        -0.5, 0.0, 0.0,
-        0.5, 0.5, 0.0,
-        0.5, -0.5, 0.0,
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
     };
     
+    GLuint indices[] = {
+        0, 1, 2,  // first Triangle
+        2, 3, 0   // second Triangle
+    };
 
     glfwMakeContextCurrent(win);
     
@@ -57,6 +64,7 @@ int main4(int argc, const char * argv[]) {
     
     GLuint vertexArrayObject;
     glGenVertexArrays(1, &vertexArrayObject);
+    
     glBindVertexArray(vertexArrayObject);
     
     GLuint vertexBufferObject;
@@ -64,9 +72,17 @@ int main4(int argc, const char * argv[]) {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     
+    GLuint elementBufferObject;
+    glGenBuffers(1, &elementBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    
     //stride参数 也可以设置为0来让OpenGL决定具体步长是多少（只有当数值是紧密排列时才可用）
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
     glEnableVertexAttribArray(0);//这一句很关键
+    
+    
+    
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -74,6 +90,8 @@ int main4(int argc, const char * argv[]) {
     
     
     GLuint program = compileShaders();
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
     while(!glfwWindowShouldClose(win)){
 //        double time = glfwGetTime();
@@ -83,8 +101,9 @@ int main4(int argc, const char * argv[]) {
         
         
         glUseProgram(program);
-        glBindVertexArray(vertexArrayObject);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(vertexArrayObject);//注意这里绑定的还是VAO，EBO是一致绑定着的，没解绑过
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
         
         glfwSwapBuffers(win);
         glfwPollEvents();
@@ -92,3 +111,6 @@ int main4(int argc, const char * argv[]) {
     glfwTerminate();
     return 0;
 }
+
+
+
