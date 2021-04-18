@@ -12,4 +12,6 @@
 
 GLuint compileShaders(void);
 
+GLuint compileShadersWithSources(const GLchar *vertexShaderSource, const GLchar *fragmentShaderSource);
+
 #endif /* GLUtilities_hpp */

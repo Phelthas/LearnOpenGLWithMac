@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4335B212262C19BA007F4661 /* lesson5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4335B211262C19BA007F4661 /* lesson5.cpp */; };
+		4335B215262C1E7F007F4661 /* lesson4_2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4335B214262C1E7F007F4661 /* lesson4_2.cpp */; };
 		4375DD3F261EC924004EB5FC /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4375DD3E261EC924004EB5FC /* libglfw3.a */; };
 		4375DD42261EC931004EB5FC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4375DD41261EC931004EB5FC /* OpenGL.framework */; };
 		4375DD45261EC9E7004EB5FC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4375DD44261EC9E7004EB5FC /* IOKit.framework */; };
@@ -34,6 +36,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4335B211262C19BA007F4661 /* lesson5.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lesson5.cpp; sourceTree = "<group>"; };
+		4335B214262C1E7F007F4661 /* lesson4_2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lesson4_2.cpp; sourceTree = "<group>"; };
 		4375DD31261EC7C8004EB5FC /* LearnGLFW */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LearnGLFW; sourceTree = BUILT_PRODUCTS_DIR; };
 		4375DD34261EC7C8004EB5FC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4375DD3E261EC924004EB5FC /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = ../../../../../usr/local/lib/libglfw3.a; sourceTree = "<group>"; };
@@ -94,6 +98,8 @@
 				43AC1C91262053730027342B /* lesson3.cpp */,
 				43AC1C5826204E6D0027342B /* lesson4.cpp */,
 				43A464352621C67A007A418D /* lesson4_1.cpp */,
+				4335B214262C1E7F007F4661 /* lesson4_2.cpp */,
+				4335B211262C19BA007F4661 /* lesson5.cpp */,
 			);
 			path = LearnGLFW;
 			sourceTree = "<group>";
@@ -168,9 +174,11 @@
 			files = (
 				43AC1C92262053730027342B /* lesson3.cpp in Sources */,
 				43AC1C98262053F20027342B /* lesson2.cpp in Sources */,
+				4335B215262C1E7F007F4661 /* lesson4_2.cpp in Sources */,
 				43A464362621C67A007A418D /* lesson4_1.cpp in Sources */,
 				43AC1C9A2620542E0027342B /* main.cpp in Sources */,
 				43AC1C96262053BC0027342B /* lesson1.cpp in Sources */,
+				4335B212262C19BA007F4661 /* lesson5.cpp in Sources */,
 				43AC1C9C2620543F0027342B /* lesson4.cpp in Sources */,
 				43A4643A2621C8E4007A418D /* GLUtilities.cpp in Sources */,
 			);

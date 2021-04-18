@@ -1,8 +1,8 @@
 //
-//  lesson4_1.cpp
+//  lesson5.cpp
 //  LearnGLFW
 //
-//  Created by billthaslu on 2021/4/10.
+//  Created by billthaslu on 2021/4/18.
 //
 
 #include <GLFW/glfw3.h>
@@ -17,7 +17,7 @@
 #endif
 
 
-int main4_1(int argc, const char * argv[]) {
+int main(int argc, const char * argv[]) {
     
     
     GLFWwindow* win;
@@ -52,7 +52,7 @@ int main4_1(int argc, const char * argv[]) {
     
     GLuint indices[] = {
         0, 1, 2,  // first Triangle
-        1, 2, 3   // second Triangle
+        2, 3, 0   // second Triangle
     };
 
     glfwMakeContextCurrent(win);
@@ -88,10 +88,35 @@ int main4_1(int argc, const char * argv[]) {
 
     glBindVertexArray(0);
     
+    static const GLchar *vertexShaderSource = " \
+    #version 330 core \
+    uniform float scale; \
+    layout (location = 0) in vec3 Position; \
+    void main(void)    \
+    { \
+    gl_Position = vec4(Position.x, scale * Position.y, Position.z, 1.0); \
+    } \
+    ";
     
-    GLuint program = compileShaders();
+
+    static const GLchar *fragmentShaderSource = " \
+    #version 330 core \
+    out vec4 FragColor; \
+    uniform vec4 ourColor; \
+    void main(void) \
+    { \
+    FragColor = ourColor; \
+    } \
+    ";
     
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    GLuint program = compileShadersWithSources(vertexShaderSource, fragmentShaderSource);
+    
+    GLuint scaleLocation = glGetUniformLocation(program, "scale");
+    assert(scaleLocation != 0xffffffff);
+    
+    GLuint ourColorLocation = glGetUniformLocation(program, "ourColor");
+    
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
     while(!glfwWindowShouldClose(win)){
 //        double time = glfwGetTime();
@@ -99,10 +124,15 @@ int main4_1(int argc, const char * argv[]) {
         glClearColor(0.25, 0.25, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
+        static float scale = 0;
+        scale += 0.01;
+        glUniform1f(scaleLocation, sin(scale));
+        glUniform4f(ourColorLocation, sin(scale), 0.0, 0.0, 1);
+        
         
         glUseProgram(program);
         glBindVertexArray(vertexArrayObject);//注意这里绑定的还是VAO，EBO是一致绑定着的，没解绑过
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
         
         glfwSwapBuffers(win);
@@ -111,6 +141,7 @@ int main4_1(int argc, const char * argv[]) {
     glfwTerminate();
     return 0;
 }
+
 
 
 

@@ -1,8 +1,8 @@
 //
-//  lesson4_1.cpp
+//  lesson4_2.cpp
 //  LearnGLFW
 //
-//  Created by billthaslu on 2021/4/10.
+//  Created by billthaslu on 2021/4/18.
 //
 
 #include <GLFW/glfw3.h>
@@ -17,7 +17,7 @@
 #endif
 
 
-int main4_1(int argc, const char * argv[]) {
+int main4_2(int argc, const char * argv[]) {
     
     
     GLFWwindow* win;
@@ -47,12 +47,16 @@ int main4_1(int argc, const char * argv[]) {
         0.5f,  0.5f, 0.0f,  // top right
         0.5f, -0.5f, 0.0f,  // bottom right
         -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left
+        -0.5f,  0.5f, 0.0f,   // top left
+        0.0, 0.0, 0.0,
     };
     
     GLuint indices[] = {
-        0, 1, 2,  // first Triangle
-        1, 2, 3   // second Triangle
+        0, 1, 4,  // first Triangle
+    };
+
+    GLuint indices2[] = {
+        4, 2, 3   // second Triangle
     };
 
     glfwMakeContextCurrent(win);
@@ -64,7 +68,6 @@ int main4_1(int argc, const char * argv[]) {
     
     GLuint vertexArrayObject;
     glGenVertexArrays(1, &vertexArrayObject);
-    
     glBindVertexArray(vertexArrayObject);
     
     GLuint vertexBufferObject;
@@ -81,8 +84,23 @@ int main4_1(int argc, const char * argv[]) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
     glEnableVertexAttribArray(0);//这一句很关键
     
+//    glBindBuffer(GL_ARRAY_BUFFER, 0);//如果不写这一句，可以让两个ebo公用同一个vbo
+
+    glBindVertexArray(0);
     
     
+    GLuint vertexArrayObject2;
+    glGenVertexArrays(1, &vertexArrayObject2);
+    glBindVertexArray(vertexArrayObject2);
+    
+    GLuint elementBufferObject2;
+    glGenBuffers(1, &elementBufferObject2);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject2);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
+    
+    //stride参数 也可以设置为0来让OpenGL决定具体步长是多少（只有当数值是紧密排列时才可用）
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(0);//这一句很关键
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -102,7 +120,11 @@ int main4_1(int argc, const char * argv[]) {
         
         glUseProgram(program);
         glBindVertexArray(vertexArrayObject);//注意这里绑定的还是VAO，EBO是一致绑定着的，没解绑过
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+        
+        glBindVertexArray(vertexArrayObject2);//注意这里绑定的还是VAO，EBO是一致绑定着的，没解绑过
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
         
         glfwSwapBuffers(win);
@@ -111,6 +133,7 @@ int main4_1(int argc, const char * argv[]) {
     glfwTerminate();
     return 0;
 }
+
 
 
 
