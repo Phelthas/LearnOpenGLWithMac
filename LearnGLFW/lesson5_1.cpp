@@ -1,5 +1,5 @@
 //
-//  lesson5.cpp
+//  lesson5_1.cpp
 //  LearnGLFW
 //
 //  Created by billthaslu on 2021/4/18.
@@ -10,14 +10,7 @@
 #include <iostream>
 #include "GLUtilities.hpp"
 
-
-#if !defined(_STRINGIFY)
-#define __STRINGIFY( _x )   # _x
-#define _STRINGIFY( _x )   __STRINGIFY( _x )
-#endif
-
-
-int main5(int argc, const char * argv[]) {
+int main(int argc, const char * argv[]) {
     
     
     GLFWwindow* win;
@@ -44,15 +37,14 @@ int main5(int argc, const char * argv[]) {
     }
     
     GLfloat vertices[] = {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left
+        // 位置              // 颜色
+        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
+        0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
     };
     
     GLuint indices[] = {
         0, 1, 2,  // first Triangle
-        2, 3, 0   // second Triangle
     };
 
     glfwMakeContextCurrent(win);
@@ -78,10 +70,11 @@ int main5(int argc, const char * argv[]) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
     //stride参数 也可以设置为0来让OpenGL决定具体步长是多少（只有当数值是紧密排列时才可用）
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), 0);
     glEnableVertexAttribArray(0);//这一句很关键
     
-    
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);//这一句很关键
     
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -90,11 +83,13 @@ int main5(int argc, const char * argv[]) {
     
     static const GLchar *vertexShaderSource = " \
     #version 330 core \
-    uniform float scale; \
     layout (location = 0) in vec3 Position; \
+    layout (location = 1) in vec3 inColor; \
+    out vec3 ourColor; \
     void main(void)    \
     { \
-    gl_Position = vec4(Position.x, scale * Position.y, Position.z, 1.0); \
+    gl_Position = vec4(Position, 1.0); \
+    ourColor = inColor; \
     } \
     ";
     
@@ -102,19 +97,15 @@ int main5(int argc, const char * argv[]) {
     static const GLchar *fragmentShaderSource = " \
     #version 330 core \
     out vec4 FragColor; \
-    uniform vec4 ourColor; \
+    in vec3 ourColor; \
     void main(void) \
     { \
-    FragColor = ourColor; \
+    FragColor = vec4(ourColor, 1.0); \
     } \
     ";
     
     GLuint program = compileShadersWithSources(vertexShaderSource, fragmentShaderSource);
     
-    GLuint scaleLocation = glGetUniformLocation(program, "scale");
-    assert(scaleLocation != 0xffffffff);
-    
-    GLuint ourColorLocation = glGetUniformLocation(program, "ourColor");
     
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
@@ -123,11 +114,6 @@ int main5(int argc, const char * argv[]) {
         
         glClearColor(0.25, 0.25, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        
-        static float scale = 0;
-        scale += 0.01;
-        glUniform1f(scaleLocation, sin(scale));
-        glUniform4f(ourColorLocation, sin(scale), 0.0, 0.0, 1);
         
         
         glUseProgram(program);
@@ -141,6 +127,7 @@ int main5(int argc, const char * argv[]) {
     glfwTerminate();
     return 0;
 }
+
 
 
 
